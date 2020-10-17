@@ -1,0 +1,18 @@
+.estrutura-botao {
+    height: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.4em;
+    background-color: black;
+    color: rgb(255, 255, 255);
+    flex: 1;
+    border-radius: 20%;
+}
+
+.operador {
+    background-color: #bb3838;
+    color:black;
+    font-weight: bold;
+}
