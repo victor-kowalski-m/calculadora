@@ -9,6 +9,7 @@
     color: rgb(255, 255, 255);
     flex: 1;
     border-radius: 20%;
+    box-shadow: 0 0 2pt black;
 }
 
 .operador {

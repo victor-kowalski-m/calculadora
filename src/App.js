@@ -4,6 +4,9 @@ import './App.css';
 import { Botao } from "./components/Botao";
 import { Input } from './components/Input';
 import { Clear } from './components/Clear';
+import { Slot } from './components/Slot';
+import { Botaomemo } from "./components/Botaomemo";
+
 
 class App extends Component {
   constructor(props) {
@@ -13,12 +16,18 @@ class App extends Component {
       input: "",
       numAnterior:"",
       numAtual:"",
-      operator:""
+      operator:"",
+      lista: []
     }
   }
 
   addInput = val => {
-    this.setState({input: this.state.input + val});
+    if (this.state.input!="0"){
+      this.setState({input: this.state.input + val});
+    }
+    else {
+      this.setState({input: val});
+    }
   };
 
   addDecimal = val => {
@@ -79,12 +88,69 @@ class App extends Component {
     this.setState({numAnterior: "" , operator:""})
   }
 
+  salvar = () => {
+    if (this.state.lista.length<7){ 
+      this.state.lista.push(parseFloat(this.state.input))
+      this.setState({lista: this.state.lista});
+    }
+    else {
+      this.state.lista.splice(0,1);
+      this.setState({lista: this.state.lista});
+      this.state.lista.push(parseFloat(this.state.input))
+      this.setState({lista: this.state.lista});
+    }
+  }
+
+  recuperar = () => {
+    if (this.state.lista.length>0){ 
+     this.setState({input: this.state.lista[this.state.lista.length-1]})
+    }
+  }
+
+  limpar = () => {
+    this.setState({lista: []})
+  }
+
+  somar = () => {
+    if (this.state.lista.length>0){
+    this.state.lista[this.state.lista.length-1]=(parseFloat(this.state.lista[this.state.lista.length-1])+parseFloat(this.state.input)).toLocaleString('en-US', {
+      minimumFractionDigits: 0, maximumFractionDigits: 8});}
+    else{
+      if (this.state.lista.length<7){ 
+        this.state.lista.push(parseFloat(this.state.input))
+        this.setState({lista: this.state.lista});
+      }
+      else {
+        this.state.lista.splice(0,1);
+        this.setState({lista: this.state.lista});
+        this.state.lista.push(parseFloat(this.state.input))
+        this.setState({lista: this.state.lista});
+      }
+    }
+    this.setState({lista: this.state.lista})
+  }
+
+  limparitem = (posicao) => {
+    this.state.lista.splice(posicao,1);
+    this.setState({lista: this.state.lista});
+  }
+
+  recuperaritem = (posicao) => {
+    this.setState({input: this.state.lista[posicao]})
+  }
+
   render() {
     return (<div className="app">
      <div className="estruturaCalc">
        <br></br><br></br>
       <Input input={this.state.numAnterior+this.state.operator}></Input>
       <Input input={this.state.input}></Input>
+      <div className="row">
+          <Botao noClique={this.limpar}>MC</Botao>
+          <Botao noClique={this.recuperar}>MR</Botao>
+          <Botao noClique={this.somar}>M+</Botao>
+          <Botao noClique={this.salvar}>MS</Botao>
+        </div>
       <div className="row">
           <Botao noClique={this.addInput}>7</Botao>
           <Botao noClique={this.addInput}>8</Botao>
@@ -113,6 +179,18 @@ class App extends Component {
           <Clear Limpar={() => this.setState({input: ""})}>AC</Clear>
         </div>
       </div>
+    <aside className="memoria">
+      <h2>Memória</h2>    
+    {this.state.lista.slice(0).reverse().map(
+            (val,index) => <div className="rowmemo"> 
+              <Slot slot={val}></Slot>
+              <Botaomemo posicao={this.state.lista.length-1-index} noClique={this.limparitem}>MC</Botaomemo>
+              <Botaomemo posicao={this.state.lista.length-1-index} noClique={this.recuperaritem}>MR</Botaomemo>
+              <br></br>
+            </div>
+          )
+        }
+    </aside>
     </div>)
   }
 }
